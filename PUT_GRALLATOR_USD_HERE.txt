@@ -1,0 +1,5 @@
+Export your Grallator USD from Isaac Sim as grallator.usd and place it in this folder, OR set:
+
+export GRALLATOR_USD_PATH=/absolute/path/to/grallator.usd
+
+The grallator.py asset config uses GRALLATOR_USD_PATH if it is set.
