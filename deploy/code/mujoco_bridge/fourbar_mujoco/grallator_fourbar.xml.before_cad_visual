@@ -1,0 +1,86 @@
+<mujoco model="grallator_FL_calf_fourbar">
+  <compiler angle="radian" autolimits="true"/>
+
+  <option timestep="0.001"
+          gravity="0 0 0"
+          integrator="implicitfast"
+          iterations="100"/>
+
+  <visual>
+    <global azimuth="90" elevation="-90"/>
+    <scale jointlength="0.025" jointwidth="0.006"/>
+  </visual>
+
+  <default>
+    <joint type="hinge"
+           axis="0 0 1"
+           damping="0.01"
+           armature="0.0001"/>
+    <geom type="capsule"
+          size="0.006"
+          density="2700"
+          contype="0"
+          conaffinity="0"/>
+    <site type="sphere" size="0.009"/>
+  </default>
+
+  <worldbody>
+    <light pos="0.17 0 0.7" dir="0 0 -1"/>
+
+    <!-- Fixed ground link AD = 0.34000 m -->
+    <geom name="ground_AD"
+          type="capsule"
+          fromto="0 0 0  0.34000 0 0"
+          size="0.006"
+          rgba="0.25 0.25 0.25 1"/>
+
+    <site name="A_marker" pos="0 0 0" rgba="0.1 0.8 0.1 1"/>
+    <site name="D_marker" pos="0.34000 0 0" rgba="0.1 0.8 0.1 1"/>
+
+    <!-- FL calf motor crank AB. q=0 corresponds to geometric theta2 = 60 deg. -->
+    <body name="crank_body"
+          pos="0 0 0"
+          euler="0 0 1.047197551197">
+      <joint name="FL_calf_joint"/>
+      <geom name="crank_AB"
+            fromto="0 0 0  0.05530 0 0"
+            rgba="0.85 0.25 0.20 1"/>
+      <site name="B_marker" pos="0.05530 0 0" rgba="0.95 0.65 0.1 1"/>
+
+      <!-- Coupler BC -->
+      <body name="coupler_body"
+            pos="0.05530 0 0"
+            euler="0 0 -1.053919559721">
+        <joint name="FL_calf_fourbar_coupler_joint"/>
+        <geom name="coupler_BC"
+              fromto="0 0 0  0.34367 0 0"
+              rgba="0.20 0.45 0.90 1"/>
+        <site name="C_coupler"
+              pos="0.34367 0 0"
+              rgba="0.95 0.20 0.75 1"/>
+      </body>
+    </body>
+
+    <!-- FL calf four-bar output rocker CD, pivoted at D -->
+    <body name="rocker_body"
+          pos="0.34000 0 0"
+          euler="0 0 0.968877783749">
+      <joint name="FL_calf_fourbar_rocker_joint"/>
+      <geom name="rocker_CD"
+            fromto="0 0 0  0.05530 0 0"
+            rgba="0.20 0.75 0.45 1"/>
+      <site name="C_rocker"
+            pos="0.05530 0 0"
+            rgba="0.95 0.20 0.75 0.55"/>
+    </body>
+  </worldbody>
+
+  <!-- True loop closure: coupler end C is pinned to rocker end C. -->
+  <equality>
+    <connect name="fourbar_C_pin"
+             site1="C_coupler"
+             site2="C_rocker"
+             solref="0.002 1"
+             solimp="0.95 0.99 0.001"/>
+  </equality>
+</mujoco>

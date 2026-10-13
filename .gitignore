@@ -1,0 +1,28 @@
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+
+# Temporary files
+*.log
+*.tmp
+*.swp
+
+# Editor settings
+.vscode/
+.idea/
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Generated outputs
+logs/
+outputs/
+

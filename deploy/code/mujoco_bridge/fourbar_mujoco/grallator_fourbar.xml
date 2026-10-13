@@ -1,0 +1,139 @@
+<mujoco model="grallator_FL_calf_fourbar">
+  <compiler angle="radian" autolimits="true"/>
+
+  <option timestep="0.001"
+          gravity="0 0 0"
+          integrator="implicitfast"
+          iterations="100"/>
+
+  <visual>
+    <global azimuth="90" elevation="-90"/>
+    <scale jointlength="0.025" jointwidth="0.006"/>
+  </visual>
+
+  <default>
+    <joint type="hinge"
+           axis="0 0 1"
+           damping="0.01"
+           armature="0.0001"/>
+    <geom type="capsule"
+          size="0.006"
+          density="2700"
+          contype="0"
+          conaffinity="0"/>
+    <site type="sphere" size="0.009"/>
+  </default>
+
+  <worldbody>
+    <light pos="0.17 0 0.7" dir="0 0 -1"/>
+
+    <!-- Fixed ground link AD = 0.34000 m -->
+    <geom name="ground_AD"
+          type="capsule"
+          fromto="0 0 0  0.34000 0 0"
+          size="0.006"
+          rgba="0.18 0.18 0.18 1"/>
+
+    <site name="A_marker" pos="0 0 0" rgba="0.1 0.8 0.1 1"/>
+
+    <!-- CAD_STYLE_VISUALS_BEGIN -->
+
+    <!-- Thick fixed AD link: 340 mm -->
+    <site name="AD_visual"
+          type="capsule"
+          fromto="0 0 0.004  0.34000 0 0.004"
+          size="0.018"
+          rgba="0.16 0.16 0.17 1"/>
+
+    <!-- Visual motor body at crank pivot A -->
+    <site name="FL_calf_motor_visual"
+          type="cylinder"
+          pos="0 0 0.004"
+          size="0.034 0.004"
+          rgba="0.22 0.22 0.23 1"/>
+
+    <site name="D_marker" pos="0.34000 0 0" rgba="0.1 0.8 0.1 1"/>
+
+    <!-- FL calf motor crank AB. q=0 corresponds to geometric theta2 = 60 deg. -->
+    <body name="crank_body"
+          pos="0 0 0"
+          euler="0 0 1.047197551197">
+      <joint name="FL_calf_joint"/>
+      <geom name="crank_AB"
+            fromto="0 0 0  0.05530 0 0"
+            rgba="0.25 0.25 0.25 1"/>
+      <site name="B_marker" pos="0.05530 0 0" rgba="0.95 0.65 0.1 1"/>
+
+      <!-- Thick 55.30 mm crank -->
+      <site name="AB_visual"
+            type="capsule"
+            fromto="0 0 0.006  0.05530 0 0.006"
+            size="0.013"
+            rgba="0.28 0.28 0.29 1"/>
+
+
+      <!-- Coupler BC -->
+      <body name="coupler_body"
+            pos="0.05530 0 0"
+            euler="0 0 -1.053919559721">
+        <joint name="FL_calf_fourbar_coupler_joint"/>
+        <geom name="coupler_BC"
+              fromto="0 0 0  0.34367 0 0"
+              rgba="0.08 0.08 0.08 1"/>
+        <site name="C_coupler"
+              pos="0.34367 0 0"
+              rgba="0.95 0.20 0.75 1"/>
+
+        <!-- Long 343.67 mm upper connecting rod -->
+        <site name="BC_visual"
+              type="capsule"
+              fromto="0 0 0.008  0.34367 0 0.008"
+              size="0.006"
+              rgba="0.08 0.08 0.09 1"/>
+
+      </body>
+    </body>
+
+    <!-- FL calf four-bar output rocker CD, pivoted at D -->
+    <body name="rocker_body"
+          pos="0.34000 0 0"
+          euler="0 0 0.968877783749">
+      <joint name="FL_calf_fourbar_rocker_joint"/>
+      <geom name="rocker_CD"
+            fromto="0 0 0  0.05530 0 0"
+            rgba="0.18 0.18 0.18 1"/>
+      <site name="C_rocker"
+            pos="0.05530 0 0"
+            rgba="0.95 0.20 0.75 0.55"/>
+
+      <!--
+        Rocker is physically CD = 55.30 mm.
+        The negative-X portion below D is VISUAL ONLY so the
+        drawing resembles the real calf mechanism.
+      -->
+      <site name="CD_and_calf_visual"
+            type="capsule"
+            fromto="-0.24000 0 0.008  0.05530 0 0.008"
+            size="0.016"
+            rgba="0.16 0.16 0.17 1"/>
+
+      <site name="calf_end_visual"
+            type="sphere"
+            pos="-0.24000 0 0.008"
+            size="0.018"
+            rgba="0.16 0.16 0.17 1"/>
+
+      <!-- CAD_STYLE_VISUALS_END -->
+
+    </body>
+  </worldbody>
+
+  <!-- True loop closure: coupler end C is pinned to rocker end C. -->
+  <equality>
+    <connect name="fourbar_C_pin"
+             site1="C_coupler"
+             site2="C_rocker"
+             solref="0.002 1"
+             solimp="0.95 0.99 0.001"/>
+  </equality>
+</mujoco>
